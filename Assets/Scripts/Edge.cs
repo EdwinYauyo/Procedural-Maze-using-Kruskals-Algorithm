@@ -11,6 +11,7 @@ public class Edge : MonoBehaviour
     {
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<BoxCollider>().enabled = false;
+        
     }
 }
 
