@@ -143,11 +143,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 7290536232855074564, guid: 65631297fea30f541b1a2eecbaff0848, type: 3}
   scaleMaze: 1
-  width: 5
-  height: 5
+  width: 3
+  height: 3
   tiles: []
   edges: []
   EdgeIndex: 0
+  orderRandom: 0
 --- !u!4 &263525314
 Transform:
   m_ObjectHideFlags: 0

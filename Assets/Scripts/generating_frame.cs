@@ -142,7 +142,7 @@ public class generating_frame : MonoBehaviour
 
                 go.GetComponent<Edge>().tiles = new Tile[2];
                 go.GetComponent<Edge>().tiles[0] = tiles[EdgeIndex];
-                go.GetComponent<Edge>().tiles[1] = tiles[EdgeIndex + 1];
+                go.GetComponent<Edge>().tiles[1] = tiles[EdgeIndex + width];
 
                 edges.Add(go.GetComponent<Edge>());
 
