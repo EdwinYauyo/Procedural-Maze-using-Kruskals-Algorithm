@@ -7,7 +7,7 @@ public class Edge : MonoBehaviour
 {
     public Tile[] tiles;
 
-    public void disableEdge()
+    public void DisableEdge()
     {
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         gameObject.GetComponent<BoxCollider>().enabled = false;

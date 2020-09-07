@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class generating_frame : MonoBehaviour
+public class GeneratingFrame : MonoBehaviour
 {
-
+    public float delayTime=0.1f;
     public GameObject prefab;
     public float scaleMaze;
-    [Range(1,30)]
+    [Range(1,80)]
     public int width;
 
-    [Range(1, 30)]
+    [Range(1, 80)]
     public int height;
 
     [HideInInspector] public Tile[] tiles;
@@ -19,11 +19,11 @@ public class generating_frame : MonoBehaviour
 
     [HideInInspector] public int EdgeIndex = 0;
     [SerializeField] private int orderRandom = 0;
+    public bool active;
 
-
-    public void Start()
+    public void Execution(float t)
     {
-        prefab.transform.localScale = new Vector3(10 * scaleMaze, prefab.transform.localScale.y, prefab.transform.localScale.z);
+        prefab.transform.localScale = new Vector3(10 * scaleMaze, 4 * scaleMaze, 1.5f * scaleMaze);
 
         tiles = new Tile[width * height];
 
@@ -33,38 +33,31 @@ public class generating_frame : MonoBehaviour
         }
 
         edges = new List<Edge>();
-
-
-        Ex(0);
-        
+        StartCoroutine(ExecutionCoroutine(t));
     }
 
-    void Ex(float t)
+    IEnumerator ExecutionCoroutine(float t)
     {
-        StartCoroutine(Execution(t));
-    }
-
-    IEnumerator Execution(float t)
-    {
-        spawnLeftRightBoundaries();
+        yield return new WaitForSeconds(t);
+        SpawnLeftRightBoundaries();
         yield return new WaitForSeconds(t);
         Debug.Log("next");
-        spawnUpDownBoundaries();
+        SpawnUpDownBoundaries();
         yield return new WaitForSeconds(t);
         Debug.Log("next");
-        spawnInnerEdgesLeftRight();
+        SpawnInnerEdgesLeftRight();
         yield return new WaitForSeconds(t);
         Debug.Log("next");
-        spawnInnerEdgesUpDown();
+        SpawnInnerEdgesUpDown();
         yield return new WaitForSeconds(t);
         Debug.Log("next");
-        StartCoroutine(removeEdgeCoroutine());
+        if(active)StartCoroutine(RemoveEdgeCoroutine());
         
         
     }
 
     // Generating frame (outter boundaries)
-    public void spawnLeftRightBoundaries()
+    public void SpawnLeftRightBoundaries()
     {
         for (int z = 1; z <= height; z++)
         {
@@ -81,7 +74,7 @@ public class generating_frame : MonoBehaviour
         
     }
 
-    public void spawnUpDownBoundaries()
+    public void SpawnUpDownBoundaries()
     {
         for (int z = 0; z <= height; z++)
         {
@@ -99,7 +92,7 @@ public class generating_frame : MonoBehaviour
 
 
     // Generating edges (innner Boundaries)
-    public void spawnInnerEdgesLeftRight()
+    public void SpawnInnerEdgesLeftRight()
     {
         EdgeIndex = 0;
 
@@ -128,7 +121,7 @@ public class generating_frame : MonoBehaviour
         }
     }
 
-    public void spawnInnerEdgesUpDown()
+    public void SpawnInnerEdgesUpDown()
     {
         EdgeIndex = 0;
 
@@ -154,7 +147,7 @@ public class generating_frame : MonoBehaviour
     }
 
 
-    public void removeEdges()
+    public void RemoveEdges()
     {
         // Get a random edge
 
@@ -166,12 +159,12 @@ public class generating_frame : MonoBehaviour
         edges.RemoveAt(randInt);
 
         // Both null
-        if (Tile.getHighestParent(randomEdge.tiles[0]) == Tile.getHighestParent(randomEdge.tiles[1]))
+        if (Tile.GetHighestParent(randomEdge.tiles[0]) == Tile.GetHighestParent(randomEdge.tiles[1]))
         {
-            if (Tile.getHighestParent(randomEdge.tiles[0]) == null && Tile.getHighestParent(randomEdge.tiles[1]) == null)
+            if (Tile.GetHighestParent(randomEdge.tiles[0]) == null && Tile.GetHighestParent(randomEdge.tiles[1]) == null)
             {
                 randomEdge.tiles[0].parent = randomEdge.tiles[1];
-                randomEdge.disableEdge();
+                randomEdge.DisableEdge();
                 Debug.Log("ta null 2");
 
             }
@@ -179,18 +172,18 @@ public class generating_frame : MonoBehaviour
 
         else
         {
-            if (Tile.getHighestParent(randomEdge.tiles[0]) == null && Tile.getHighestParent(randomEdge.tiles[1]) == null)
+            if (Tile.GetHighestParent(randomEdge.tiles[0]) == null && Tile.GetHighestParent(randomEdge.tiles[1]) == null)
             {
-                Tile.getHighestParent(randomEdge.tiles[0]).parent = randomEdge.tiles[1];
-                randomEdge.disableEdge();
+                Tile.GetHighestParent(randomEdge.tiles[0]).parent = randomEdge.tiles[1];
+                randomEdge.DisableEdge();
                 Debug.Log("ta null 2");
 
             }
 
             else
             {
-                Tile.getHighestParent(randomEdge.tiles[1]).parent = randomEdge.tiles[0];
-                randomEdge.disableEdge();
+                Tile.GetHighestParent(randomEdge.tiles[1]).parent = randomEdge.tiles[0];
+                randomEdge.DisableEdge();
             }
         }
         
@@ -200,14 +193,14 @@ public class generating_frame : MonoBehaviour
 
     }
 
-    public IEnumerator removeEdgeCoroutine()
+    public IEnumerator RemoveEdgeCoroutine()
     {
         int loopNum = edges.Count;
 
         for (int i = 0; i < loopNum; i++)
         { 
-            removeEdges();
-            yield return new WaitForSeconds(0f);
+            if(edges.Count>0)RemoveEdges();
+            yield return new WaitForSeconds(delayTime);
         }
     }
 
@@ -222,7 +215,7 @@ public class Tile
    
     public Tile parent;
 
-    public static Tile getHighestParent(Tile tile)
+    public static Tile GetHighestParent(Tile tile)
     {
 
         
@@ -234,7 +227,7 @@ public class Tile
 
         else
         {
-            return getHighestParent(tile.parent);
+            return GetHighestParent(tile.parent);
         }
 
         
